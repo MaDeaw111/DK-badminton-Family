@@ -89,7 +89,7 @@ export default function Dashboard({
     return getStudentsForDay(dayId);
   };
 
-  // Group training summary for a specific date (Shows Group Names e.g. กลุ่ม 1 (4 คน), กลุ่ม 2 (2 คน))
+  // Group training summary for a specific date (Shows Exact Custom Group Names)
   const getGroupsForDate = (dateStr) => {
     const dayStudents = getStudentsForDate(dateStr);
     const groupsMap = {};
@@ -98,9 +98,13 @@ export default function Dashboard({
       const gId = std.class_group_id || 'grp_1';
       if (!groupsMap[gId]) {
         const foundGroup = classGroups.find(c => c.id === gId);
+        let displayName = foundGroup ? foundGroup.name : (std.course_type === 'private' ? 'คอร์สเรียนเดี่ยว' : 'คอร์สกลุ่ม');
+        // Clean bracketed time text if present
+        displayName = displayName.replace(/\s*\[.*?\]\s*/g, '').trim();
+
         groupsMap[gId] = {
           id: gId,
-          name: foundGroup ? foundGroup.name : (std.course_type === 'private' ? 'คอร์สเรียนเดี่ยว' : 'คอร์สกลุ่ม'),
+          name: displayName,
           count: 0,
           students: []
         };
@@ -287,7 +291,7 @@ export default function Dashboard({
             </div>
 
             <p className="text-xs text-slate-400 hidden sm:block">
-              * แสดง <strong className="text-cyan-400">ชื่อกลุ่มซ้อม</strong> ในช่องปฏิทิน คลิกวันที่เพื่อดูแผนซ้อมและรายชื่อสมาชิก
+              * แสดง <strong className="text-cyan-400">ชื่อกลุ่มซ้อม</strong> ในปฏิทิน คลิกวันที่เพื่อดูแผนซ้อมและรายชื่อสมาชิก
             </p>
           </div>
 
@@ -349,7 +353,7 @@ export default function Dashboard({
                       )}
                     </div>
 
-                    {/* Display Class Group Name Badges inside Calendar Day Cell */}
+                    {/* Display Full Custom Class Group Name Badges */}
                     <div className="space-y-1 my-1">
                       {dateGroups.length === 0 ? (
                         <div className="text-[9px] text-slate-600 text-center py-2">ไม่มีคิวซ้อม</div>
@@ -360,8 +364,8 @@ export default function Dashboard({
                             className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-800 text-cyan-300 font-semibold truncate border border-white/10 flex items-center justify-between"
                             title={`${grp.name} (${grp.count} คน)`}
                           >
-                            <span className="truncate">{grp.name.split('[')[0]}</span>
-                            <span className="text-[9px] bg-cyan-500/20 text-cyan-200 px-1 rounded ml-1 font-bold">
+                            <span className="truncate">{grp.name}</span>
+                            <span className="text-[9px] bg-cyan-500/20 text-cyan-200 px-1 rounded ml-1 font-bold flex-shrink-0">
                               {grp.count}คน
                             </span>
                           </div>
