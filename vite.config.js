@@ -8,9 +8,13 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
-  base: '/DK-badminton-Family/',
+  base: './', // ใช้ Relative Base Path เพื่อให้ GitHub Pages โหลดไฟล์ CSS/JS ได้ 100% ทุกกรณี
   server: {
     port: 3000,
     host: true
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets'
   }
 })
