@@ -1,0 +1,195 @@
+import { getSupabaseClient } from './supabase';
+
+export const DAYS_OF_WEEK = [
+  { id: 'Mon', label: 'วันจันทร์', short: 'จ.' },
+  { id: 'Tue', label: 'วันอังคาร', short: 'อ.' },
+  { id: 'Wed', label: 'วันพุธ', short: 'พ.' },
+  { id: 'Thu', label: 'วันพฤหัสบดี', short: 'พฤ.' },
+  { id: 'Fri', label: 'วันศุกร์', short: 'ศ.' },
+  { id: 'Sat', label: 'วันเสาร์', short: 'ส.' },
+  { id: 'Sun', label: 'วันอาทิตย์', short: 'อา.' }
+];
+
+export const INITIAL_CLASS_GROUPS = [
+  { id: 'grp_1', name: 'คอร์สกลุ่ม - กลุ่ม 1 (18:00 - 19:00 น.)', max: 5 },
+  { id: 'grp_2', name: 'คอร์สกลุ่ม - กลุ่ม 2 (18:00 - 19:00 น.)', max: 5 },
+  { id: 'grp_private', name: 'คอร์สเรียนเดี่ยว (Private 1-on-1)', max: 1 }
+];
+
+// Mock Daily Training Plans
+export const INITIAL_TRAINING_PLANS = {
+  '2026-08-08': '• วอร์มร่างกาย & ฟุตเวิร์ก 6 จุด (15 นาที)\n• ฝึกเซิร์ฟสั้น & ตีลูกหลัง (20 นาที)\n• เกมรับหน้าตาข่าย & หยอดพลาสติก (15 นาที)\n• ลงสนามซ้อมแข่ง (10 นาที)',
+  '2026-08-09': '• เน้นฝึกซ้อมลูกตบ (Smash) & รับลูกตบ (Defense)\n• ฝึกสไลด์ก้าวเท้าชิดตาข่าย 4 มุม'
+};
+
+export const INITIAL_STUDENTS = [
+  {
+    id: 'std_1',
+    name: 'พี่ปุณณ์',
+    nickname: 'พี่ปุณณ์',
+    age: 10,
+    phone: '081-234-5678',
+    parent_phone: '089-111-2222',
+    training_days: ['Mon', 'Wed'],
+    notes: 'เน้นฟุตเวิร์กเบื้องต้น',
+    course_type: 'group',
+    class_group_id: 'grp_1',
+    course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
+    total_sessions: 8,
+    remaining_sessions: 8,
+    price: 3500,
+    status: 'active'
+  },
+  {
+    id: 'std_2',
+    name: 'คาถา',
+    nickname: 'คาถา',
+    age: 11,
+    phone: '082-999-8888',
+    parent_phone: '086-444-5555',
+    training_days: ['Wed', 'Sat'],
+    notes: 'ฝึกจับไม้และการเสิร์ฟ',
+    course_type: 'group',
+    class_group_id: 'grp_1',
+    course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
+    total_sessions: 8,
+    remaining_sessions: 8,
+    price: 3500,
+    status: 'active'
+  },
+  {
+    id: 'std_3',
+    name: 'ผิงผิง',
+    nickname: 'เจ๊ผิง',
+    age: 12,
+    phone: '085-777-6666',
+    parent_phone: '081-333-9999',
+    training_days: ['Mon', 'Wed'],
+    notes: 'ฝึกตบหน้าตาข่าย',
+    course_type: 'group',
+    class_group_id: 'grp_1',
+    course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
+    total_sessions: 8,
+    remaining_sessions: 8,
+    price: 3500,
+    status: 'active'
+  },
+  {
+    id: 'std_4',
+    name: 'หนึ่งคุณ',
+    nickname: 'เฮียหนึ่ง',
+    age: 12,
+    phone: '088-555-1234',
+    parent_phone: '089-777-8888',
+    training_days: ['Mon', 'Wed'],
+    notes: 'เกมรับและฟุตเวิร์ก',
+    course_type: 'group',
+    class_group_id: 'grp_1',
+    course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
+    total_sessions: 8,
+    remaining_sessions: 8,
+    price: 3500,
+    status: 'active'
+  },
+  {
+    id: 'std_5',
+    name: 'เฮียตี้',
+    nickname: 'เฮียตี้',
+    age: 13,
+    phone: '084-111-3333',
+    parent_phone: '081-222-4444',
+    training_days: ['Mon'],
+    notes: 'ซ้อมเคลียร์ลูกหลัง',
+    course_type: 'group',
+    class_group_id: 'grp_2',
+    course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
+    total_sessions: 8,
+    remaining_sessions: 8,
+    price: 3500,
+    status: 'active'
+  },
+  {
+    id: 'std_6',
+    name: 'ยิม',
+    nickname: 'ยิม',
+    age: 14,
+    phone: '081-444-5555',
+    parent_phone: '089-999-0000',
+    training_days: ['Tue', 'Thu'],
+    notes: 'เน้นความตื่นตัวและการตีลูกหยอด',
+    course_type: 'group',
+    class_group_id: 'grp_2',
+    course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
+    total_sessions: 8,
+    remaining_sessions: 8,
+    price: 3500,
+    status: 'active'
+  }
+];
+
+export const INITIAL_EVALUATIONS = {
+  'std_1': { footwork: 3, serve: 4, forehand: 3, net_control: 2, defense: 3, comments: 'ฟุตเวิร์กคล่องขึ้น แต่ต้องระวังลูกหน้าตาข่าย' },
+  'std_2': { footwork: 4, serve: 4, forehand: 5, net_control: 4, defense: 4, comments: 'ลูกตบแรงและแม่นยำมาก พัฒนาได้เร็ว' }
+};
+
+export const INITIAL_ATTENDANCE = [
+  {
+    id: 'att_1',
+    student_id: 'std_1',
+    coach_id: 'coach_1',
+    session_date: '2026-08-08',
+    status: 'present',
+    notes: 'ซ้อมเคลียร์ลูกหลังและเซิร์ฟ',
+    remaining_after: 6
+  }
+];
+
+export const COACHES = [
+  { id: 'coach_1', name: 'โค้ช A (Coach A)', role: 'Head Coach', icon: '🏸' },
+  { id: 'coach_2', name: 'โค้ช B (Coach B)', role: 'Assistant Coach', icon: '🏸' }
+];
+
+export const loadLocalStudents = () => {
+  const data = localStorage.getItem('dk_students');
+  return data ? JSON.parse(data) : INITIAL_STUDENTS;
+};
+
+export const saveLocalStudents = (students) => {
+  localStorage.setItem('dk_students', JSON.stringify(students));
+};
+
+export const loadLocalClassGroups = () => {
+  const data = localStorage.getItem('dk_class_groups');
+  return data ? JSON.parse(data) : INITIAL_CLASS_GROUPS;
+};
+
+export const saveLocalClassGroups = (groups) => {
+  localStorage.setItem('dk_class_groups', JSON.stringify(groups));
+};
+
+export const loadLocalTrainingPlans = () => {
+  const data = localStorage.getItem('dk_training_plans');
+  return data ? JSON.parse(data) : INITIAL_TRAINING_PLANS;
+};
+
+export const saveLocalTrainingPlans = (plans) => {
+  localStorage.setItem('dk_training_plans', JSON.stringify(plans));
+};
+
+export const loadLocalAttendance = () => {
+  const data = localStorage.getItem('dk_attendance');
+  return data ? JSON.parse(data) : INITIAL_ATTENDANCE;
+};
+
+export const saveLocalAttendance = (logs) => {
+  localStorage.setItem('dk_attendance', JSON.stringify(logs));
+};
+
+export const loadLocalEvaluations = () => {
+  const data = localStorage.getItem('dk_evaluations');
+  return data ? JSON.parse(data) : INITIAL_EVALUATIONS;
+};
+
+export const saveLocalEvaluations = (evals) => {
+  localStorage.setItem('dk_evaluations', JSON.stringify(evals));
+};
