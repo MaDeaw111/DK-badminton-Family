@@ -31,6 +31,8 @@ export default function App() {
   const [attendanceLogs, setAttendanceLogs] = useState(loadLocalAttendance);
   const [evaluations, setEvaluations] = useState(loadLocalEvaluations);
   
+  const [isSyncing, setIsSyncing] = useState(false);
+
   // Theme state: 'dark' | 'light'
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('dk_theme') || 'dark';
@@ -49,7 +51,7 @@ export default function App() {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // Sync to local storage
+  // Sync state to local storage
   useEffect(() => {
     saveLocalStudents(students);
   }, [students]);
@@ -70,16 +72,51 @@ export default function App() {
     saveLocalEvaluations(evaluations);
   }, [evaluations]);
 
-  // Supabase initial fetch if client available
-  useEffect(() => {
+  // Master Cloud Fetch Handler (ดึงข้อมูลล่าสุดจาก Supabase Cloud ให้ทุกอุปกรณ์ตรงกัน)
+  const fetchCloudData = async () => {
     const supabase = getSupabaseClient();
-    if (supabase) {
-      supabase.from('students').select('*').then(({ data, error }) => {
-        if (!error && data && data.length > 0) {
-          setStudents(data);
-        }
-      });
+    if (!supabase) return;
+
+    setIsSyncing(true);
+    try {
+      // 1. Fetch Students
+      const { data: stdData, error: stdErr } = await supabase.from('students').select('*');
+      if (!stdErr && stdData && stdData.length > 0) {
+        setStudents(stdData);
+      }
+
+      // 2. Fetch Attendance
+      const { data: attData, error: attErr } = await supabase.from('attendance_logs').select('*').order('created_at', { ascending: false });
+      if (!attErr && attData && attData.length > 0) {
+        setAttendanceLogs(attData);
+      }
+
+      // 3. Fetch Evaluations
+      const { data: evalData, error: evalErr } = await supabase.from('skill_evaluations').select('*');
+      if (!evalErr && evalData && evalData.length > 0) {
+        const evalsMap = {};
+        evalData.forEach(item => {
+          evalsMap[item.student_id] = item;
+        });
+        setEvaluations(evalsMap);
+      }
+    } catch (e) {
+      console.warn("Cloud sync warning:", e);
+    } finally {
+      setIsSyncing(false);
     }
+  };
+
+  // Initial fetch on mount & Periodic Sync
+  useEffect(() => {
+    fetchCloudData();
+
+    // Auto sync every 30 seconds across devices
+    const interval = setInterval(() => {
+      fetchCloudData();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Class Groups Handlers
@@ -116,6 +153,7 @@ export default function App() {
     const supabase = getSupabaseClient();
     if (supabase) {
       await supabase.from('students').insert([newStudent]).catch(console.error);
+      fetchCloudData();
     }
   };
 
@@ -125,6 +163,7 @@ export default function App() {
     const supabase = getSupabaseClient();
     if (supabase) {
       await supabase.from('students').update(updatedData).eq('id', updatedData.id).catch(console.error);
+      fetchCloudData();
     }
   };
 
@@ -134,6 +173,7 @@ export default function App() {
     const supabase = getSupabaseClient();
     if (supabase) {
       await supabase.from('students').delete().eq('id', id).catch(console.error);
+      fetchCloudData();
     }
   };
 
@@ -158,6 +198,7 @@ export default function App() {
         total_sessions: renewed.total_sessions,
         status: 'active'
       }).eq('id', id).catch(console.error);
+      fetchCloudData();
     }
   };
 
@@ -190,6 +231,7 @@ export default function App() {
           await supabase.from('students').update({ remaining_sessions: nextRemaining }).eq('id', std.id).catch(console.error);
         }
         await supabase.from('attendance_logs').insert([newLog]).catch(console.error);
+        fetchCloudData();
       }
     }
   };
@@ -207,6 +249,7 @@ export default function App() {
         coach_id: currentCoach.id,
         ...evalData
       }]).catch(console.error);
+      fetchCloudData();
     }
   };
 
@@ -227,6 +270,8 @@ export default function App() {
         onOpenSupabaseModal={() => setIsSupabaseModalOpen(true)}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onSyncCloud={fetchCloudData}
+        isSyncing={isSyncing}
       />
 
       {/* Main Content Area */}
@@ -235,6 +280,7 @@ export default function App() {
         {activeTab === 'dashboard' && (
           <Dashboard 
             students={students}
+            classGroups={classGroups}
             attendanceLogs={attendanceLogs}
             trainingPlans={trainingPlans}
             currentCoach={currentCoach}

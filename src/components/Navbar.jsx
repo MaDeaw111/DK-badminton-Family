@@ -1,158 +1,223 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
+  Calendar, 
   Users, 
-  CheckCircle2, 
+  CheckSquare, 
   Award, 
-  LayoutDashboard, 
   Database, 
-  ChevronDown, 
-  UserCheck,
-  Sun,
-  Moon
+  Sun, 
+  Moon, 
+  ShieldCheck, 
+  ChevronDown,
+  Activity,
+  RefreshCw
 } from 'lucide-react';
 import { COACHES } from '../dataStore';
-import { getSupabaseAnonKey } from '../supabase';
 
 export default function Navbar({ 
   activeTab, 
   setActiveTab, 
   currentCoach, 
-  setCurrentCoach, 
+  setCurrentCoach,
   onOpenSupabaseModal,
   theme,
-  onToggleTheme
+  onToggleTheme,
+  onSyncCloud,
+  isSyncing
 }) {
-  const [showCoachMenu, setShowCoachMenu] = useState(false);
-  const isSupabaseConnected = Boolean(getSupabaseAnonKey());
-
   return (
-    <header className="sticky top-0 z-40 bg-[#0B0F17]/90 backdrop-blur-md border-b border-white/10 px-4 lg:px-8 py-3 transition-colors">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        
-        {/* Brand & Coach Switcher */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-              <div className="w-full h-full bg-[#0F172A] rounded-[10px] flex items-center justify-center">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-xl border-b transition-colors duration-200 glass-card rounded-none border-x-0 border-t-0">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-2">
+          
+          {/* Brand Logo & Title */}
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <div className="w-full h-full bg-slate-950 dark:bg-slate-950 rounded-[14px] flex items-center justify-center">
                 <span className="text-xl">🏸</span>
               </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-bold text-lg tracking-wide text-white font-['Prompt']">
-                  DK KNIGHT <span className="text-emerald-400">BADMINTON</span>
+                <h1 className="font-extrabold text-base tracking-tight font-['Prompt']">
+                  DK KNIGHT <span className="text-emerald-500">BADMINTON</span>
                 </h1>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30">
+                <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold px-1.5 py-0.2 rounded border border-emerald-500/20 hidden sm:inline-block">
                   TRACKER
                 </span>
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">ระบบติดตามการเรียนการสอนและตัดคอร์สสำหรับโค้ช</p>
+              <p className="text-[11px] text-slate-400 font-normal">
+                ระบบติดตามการเรียนการสอนและตัดคอร์สสำหรับโค้ช
+              </p>
             </div>
           </div>
 
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-1 bg-slate-900/60 dark:bg-slate-900/60 p-1 rounded-2xl border border-slate-200/50 dark:border-white/10">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+                activeTab === 'dashboard'
+                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+              <span>แดชบอร์ด</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('students')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+                activeTab === 'students'
+                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              <span>นักเรียน & คอร์ส</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('attendance')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+                activeTab === 'attendance'
+                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <CheckSquare className="w-4 h-4" />
+              <span>เช็คชื่อตัดคอร์ส</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('evaluation')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+                activeTab === 'evaluation'
+                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Award className="w-4 h-4" />
+              <span>ประเมินทักษะ</span>
+            </button>
+          </nav>
+
+          {/* Right Action Tools: Sync, Coach Selector, Theme Toggle & Supabase */}
           <div className="flex items-center gap-2">
-            {/* Theme Switcher Button */}
+
+            {/* Cloud Sync Button */}
+            <button
+              onClick={onSyncCloud}
+              disabled={isSyncing}
+              className={`p-2 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition ${
+                isSyncing 
+                  ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40 opacity-75' 
+                  : 'btn-secondary'
+              }`}
+              title="กดเพื่อดึงข้อมูลล่าสุดจาก Supabase Cloud ให้ทุกเครื่องตรงกัน"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-cyan-400' : 'text-emerald-500'}`} />
+              <span className="hidden sm:inline">
+                {isSyncing ? 'กำลังซิงก์...' : 'ซิงก์คลาวด์'}
+              </span>
+            </button>
+            
+            {/* Coach Switcher Dropdown */}
+            <div className="relative">
+              <select
+                value={currentCoach.id}
+                onChange={(e) => {
+                  const selected = COACHES.find(c => c.id === e.target.value);
+                  if (selected) setCurrentCoach(selected);
+                }}
+                className="appearance-none bg-emerald-500/10 dark:bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold py-2 pl-8 pr-7 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+              >
+                {COACHES.map(coach => (
+                  <option key={coach.id} value={coach.id} className="bg-slate-900 text-slate-200">
+                    {coach.name}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute left-2.5 top-2.5 pointer-events-none text-xs">
+                {currentCoach.icon}
+              </div>
+              <div className="absolute right-2 top-2.5 pointer-events-none text-emerald-600 dark:text-emerald-400">
+                <ChevronDown className="w-3.5 h-3.5" />
+              </div>
+            </div>
+
+            {/* Theme Switcher Toggle */}
             <button
               onClick={onToggleTheme}
-              className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 text-slate-200 transition"
-              title={theme === 'dark' ? 'สลับเป็นโหมดสว่าง (Light Mode)' : 'สลับเป็นโหมดมืด (Dark Mode)'}
+              className="p-2 rounded-xl border btn-secondary transition"
+              title={theme === 'dark' ? 'เปลี่ยนเป็นโหมดสว่าง ☀️' : 'เปลี่ยนเป็นโหมดมืด 🌙'}
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-cyan-400" />
+                <Moon className="w-4 h-4 text-slate-700" />
               )}
             </button>
 
-            {/* Coach Switcher Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setShowCoachMenu(!showCoachMenu)}
-                className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 px-3 py-1.5 rounded-xl transition text-xs text-slate-200"
-              >
-                <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="font-medium">{currentCoach.name}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
-              </button>
+            {/* Supabase Status Button */}
+            <button
+              onClick={onOpenSupabaseModal}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition"
+              title="สถานะระบบคลาวด์ Supabase"
+            >
+              <Database className="w-3.5 h-3.5" />
+              <span className="font-bold">Supabase DB</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </button>
 
-              {showCoachMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#141B27] border border-white/10 rounded-xl shadow-2xl py-1 z-50 animate-in fade-in zoom-in-95 duration-100">
-                  <div className="px-3 py-1.5 text-[11px] text-slate-400 border-b border-white/5 font-semibold">
-                    เลือกโปรไฟล์โค้ชผู้ใช้งาน:
-                  </div>
-                  {COACHES.map((coach) => (
-                    <button
-                      key={coach.id}
-                      onClick={() => {
-                        setCurrentCoach(coach);
-                        setShowCoachMenu(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-white/5 transition ${
-                        currentCoach.id === coach.id ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-200'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <span>{coach.icon}</span>
-                        {coach.name}
-                      </span>
-                      {currentCoach.id === coach.id && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
+
         </div>
 
-        {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+        {/* Mobile Navigation Bar */}
+        <div className="flex md:hidden items-center justify-around py-2 border-t border-slate-200/50 dark:border-white/5">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex flex-col items-center gap-1 ${
+              activeTab === 'dashboard' ? 'text-emerald-500 font-bold' : 'text-slate-400'
+            }`}
           >
-            <LayoutDashboard className="w-4 h-4" />
-            <span>แดชบอร์ด</span>
+            <Calendar className="w-4 h-4" />
+            <span>ปฏิทิน</span>
           </button>
 
           <button
             onClick={() => setActiveTab('students')}
-            className={`tab-btn ${activeTab === 'students' ? 'active' : ''}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex flex-col items-center gap-1 ${
+              activeTab === 'students' ? 'text-emerald-500 font-bold' : 'text-slate-400'
+            }`}
           >
             <Users className="w-4 h-4" />
-            <span>นักเรียน & คอร์ส</span>
+            <span>นักเรียน</span>
           </button>
 
           <button
             onClick={() => setActiveTab('attendance')}
-            className={`tab-btn ${activeTab === 'attendance' ? 'active' : ''}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex flex-col items-center gap-1 ${
+              activeTab === 'attendance' ? 'text-emerald-500 font-bold' : 'text-slate-400'
+            }`}
           >
-            <CheckCircle2 className="w-4 h-4" />
-            <span>เช็คชื่อตัดคอร์ส</span>
+            <CheckSquare className="w-4 h-4" />
+            <span>เช็คชื่อ</span>
           </button>
 
           <button
             onClick={() => setActiveTab('evaluation')}
-            className={`tab-btn ${activeTab === 'evaluation' ? 'active' : ''}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex flex-col items-center gap-1 ${
+              activeTab === 'evaluation' ? 'text-emerald-500 font-bold' : 'text-slate-400'
+            }`}
           >
             <Award className="w-4 h-4" />
-            <span>ประเมินทักษะ</span>
+            <span>ประเมิน</span>
           </button>
+        </div>
 
-          {/* Supabase Status Button */}
-          <button
-            onClick={onOpenSupabaseModal}
-            className={`ml-1 px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition ${
-              isSupabaseConnected 
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20' 
-                : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:bg-cyan-500/20'
-            }`}
-            title="ตั้งค่าฐานข้อมูล Supabase"
-          >
-            <Database className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Supabase DB</span>
-            <span className={`w-2 h-2 rounded-full ${isSupabaseConnected ? 'bg-emerald-400 animate-pulse' : 'bg-cyan-400'}`}></span>
-          </button>
-        </nav>
       </div>
     </header>
   );
