@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import { DAYS_OF_WEEK } from '../dataStore';
 
-// Top-level Day Map definition
 const DAY_NAME_MAP = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
 
 export default function Dashboard({ 
@@ -75,7 +74,6 @@ export default function Dashboard({
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  // Precise local date helper to eliminate UTC timezone shift
   const getDayIdFromDateStr = (dateStr) => {
     if (!dateStr) return 'Sun';
     const parts = dateStr.split('-');
@@ -98,7 +96,6 @@ export default function Dashboard({
     return getStudentsForDay(dayId);
   };
 
-  // Group training summary for a specific date (Shows Exact Custom Group Names)
   const getGroupsForDate = (dateStr) => {
     const dayStudents = getStudentsForDate(dateStr);
     const groupsMap = {};
@@ -147,8 +144,8 @@ export default function Dashboard({
     <div className="space-y-6 animate-in fade-in duration-200">
       
       {/* Welcome Banner */}
-      <div className="glass-card p-6 relative overflow-hidden bg-gradient-to-r from-[#141B27] via-[#1A2333] to-[#0F202A] border-emerald-500/20">
-        <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="glass-card p-6 relative overflow-hidden bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#0F202A] border-emerald-500/30 text-white">
+        <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute right-12 -bottom-6 text-8xl opacity-10 pointer-events-none">🏸</div>
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -160,20 +157,20 @@ export default function Dashboard({
             <h2 className="text-2xl font-bold text-white font-['Prompt']">
               แดชบอร์ด & ตารางกลุ่มซ้อมแบดมินตัน
             </h2>
-            <p className="text-sm text-slate-400 mt-1 flex items-center gap-2">
+            <p className="text-sm text-slate-300 mt-1 flex items-center gap-2">
               <Clock className="w-3.5 h-3.5 text-slate-400" />
               <span>{todayStr}</span>
             </p>
           </div>
 
           {/* View Mode Toggle Buttons */}
-          <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-white/10">
+          <div className="flex items-center gap-2 bg-slate-900/90 p-1.5 rounded-2xl border border-white/10">
             <button
               onClick={() => setViewMode('monthly')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
                 viewMode === 'monthly' 
                   ? 'bg-cyan-400 text-slate-950 font-bold shadow-lg shadow-cyan-400/20' 
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <Grid className="w-4 h-4" />
@@ -185,7 +182,7 @@ export default function Dashboard({
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
                 viewMode === 'weekly' 
                   ? 'bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20' 
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <CalendarIcon className="w-4 h-4" />
@@ -197,7 +194,7 @@ export default function Dashboard({
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
                 viewMode === 'overview' 
                   ? 'bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-400/20' 
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <List className="w-4 h-4" />
@@ -213,16 +210,16 @@ export default function Dashboard({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">นักเรียนทั้งหมด</p>
-              <p className="text-2xl font-bold text-white mt-1">{totalStudents} <span className="text-xs font-normal text-slate-400">คน</span></p>
+              <p className="text-2xl font-bold mt-1">{totalStudents} <span className="text-xs font-normal text-slate-400">คน</span></p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
               <Users className="w-5 h-5" />
             </div>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-white/5 flex items-center gap-2">
-            <span>กลุ่ม: <strong className="text-emerald-400">{groupStudents}</strong> คน</span>
+          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-slate-200/50 flex items-center gap-2">
+            <span>กลุ่ม: <strong className="text-emerald-500">{groupStudents}</strong> คน</span>
             <span>•</span>
-            <span>เดี่ยว: <strong className="text-cyan-400">{privateStudents}</strong> คน</span>
+            <span>เดี่ยว: <strong className="text-cyan-500">{privateStudents}</strong> คน</span>
           </div>
         </div>
 
@@ -230,13 +227,13 @@ export default function Dashboard({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">คอร์สกลุ่ม (8 ครั้ง / 3,500B)</p>
-              <p className="text-2xl font-bold text-cyan-400 mt-1">{groupStudents} <span className="text-xs font-normal text-slate-400">คน</span></p>
+              <p className="text-2xl font-bold text-cyan-500 mt-1">{groupStudents} <span className="text-xs font-normal text-slate-400">คน</span></p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
               <Users className="w-5 h-5" />
             </div>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-white/5">
+          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-slate-200/50">
             คอร์สกลุ่มมาตรฐาน (18:00 - 19:00 น.)
           </div>
         </div>
@@ -245,13 +242,13 @@ export default function Dashboard({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">คอร์สเดี่ยว (8 ครั้ง / 1,200B)</p>
-              <p className="text-2xl font-bold text-amber-400 mt-1">{privateStudents} <span className="text-xs font-normal text-slate-400">คน</span></p>
+              <p className="text-2xl font-bold text-amber-500 mt-1">{privateStudents} <span className="text-xs font-normal text-slate-400">คน</span></p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
               <Zap className="w-5 h-5" />
             </div>
           </div>
-          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-white/5">
+          <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-slate-200/50">
             เรียนเดี่ยวรายบุคคล (18:00 - 19:00 น.)
           </div>
         </div>
@@ -260,20 +257,20 @@ export default function Dashboard({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">แจ้งเตือนคอร์สใกล้หมด</p>
-              <p className="text-2xl font-bold text-rose-400 mt-1">{lowCreditStudents.length} <span className="text-xs font-normal text-slate-400">คน</span></p>
+              <p className="text-2xl font-bold text-rose-500 mt-1">{lowCreditStudents.length} <span className="text-xs font-normal text-slate-400">คน</span></p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
               <AlertTriangle className="w-5 h-5" />
             </div>
           </div>
-          <div className="mt-2 text-[11px] text-rose-300/80 pt-2 border-t border-white/5 font-medium">
+          <div className="mt-2 text-[11px] text-rose-500 pt-2 border-t border-slate-200/50 font-medium">
             {lowCreditStudents.length > 0 ? 'ควรแจ้งต่ออายุคอร์สใหม่' : 'ไม่มีคอร์สค้างเตือน'}
           </div>
         </div>
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* 1. MONTHLY CALENDAR VIEW WITH EXACT CLASS GROUP NAMES IN CELLS */}
+      {/* 1. MONTHLY CALENDAR VIEW WITH HIGH-CONTRAST LIGHT MODE */}
       {/* ------------------------------------------------------------- */}
       {viewMode === 'monthly' && (
         <div className="space-y-5">
@@ -283,25 +280,25 @@ export default function Dashboard({
             <div className="flex items-center gap-3">
               <button
                 onClick={prevMonth}
-                className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition"
+                className="p-2 btn-secondary rounded-xl transition"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <h3 className="text-lg font-bold text-white font-['Prompt']">
+              <h3 className="text-lg font-bold font-['Prompt']">
                 {monthNamesTh[month]} {year + 543}
               </h3>
 
               <button
                 onClick={nextMonth}
-                className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition"
+                className="p-2 btn-secondary rounded-xl transition"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 
             <p className="text-xs text-slate-400 hidden sm:block">
-              * แสดง <strong className="text-cyan-400">ชื่อกลุ่มซ้อมแยก</strong> ในปฏิทิน คลิกวันที่เพื่อดูแผนซ้อมและรายชื่อสมาชิก
+              * แสดง <strong className="text-emerald-500 font-bold">ชื่อกลุ่มซ้อมแยก</strong> ในปฏิทิน คลิกวันที่เพื่อดูแผนซ้อมและรายชื่อสมาชิก
             </p>
           </div>
 
@@ -309,20 +306,20 @@ export default function Dashboard({
           <div className="glass-card p-5 space-y-6">
             
             {/* Days of Week Header */}
-            <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-400 border-b border-white/10 pb-2">
-              <span className="text-rose-400">อาทิตย์</span>
+            <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-400 border-b border-slate-200/50 pb-2">
+              <span className="text-rose-500">อาทิตย์</span>
               <span>จันทร์</span>
               <span>อังคาร</span>
               <span>พุธ</span>
               <span>พฤหัสบดี</span>
               <span>ศุกร์</span>
-              <span className="text-cyan-400">เสาร์</span>
+              <span className="text-cyan-500">เสาร์</span>
             </div>
 
             {/* Calendar Days */}
             <div className="grid grid-cols-7 gap-2">
               {Array.from({ length: firstDayIndex }).map((_, idx) => (
-                <div key={`empty_${idx}`} className="min-h-[95px] bg-slate-900/20 rounded-xl"></div>
+                <div key={`empty_${idx}`} className="min-h-[95px] rounded-xl cal-day-empty"></div>
               ))}
 
               {Array.from({ length: daysInMonth }).map((_, idx) => {
@@ -338,27 +335,27 @@ export default function Dashboard({
                   <div
                     key={`day_${dayNum}`}
                     onClick={() => handleSelectDate(dStr)}
-                    className={`min-h-[95px] p-2 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                    className={`min-h-[95px] p-2 rounded-xl border transition cursor-pointer flex flex-col justify-between cal-day-cell ${
                       isSelected
-                        ? 'border-emerald-400 bg-emerald-500/20 shadow-lg shadow-emerald-500/20'
+                        ? 'border-emerald-500 ring-2 ring-emerald-500/30 bg-emerald-50/50 shadow-md'
                         : isToday
-                        ? 'border-cyan-400/60 bg-cyan-500/10'
-                        : 'border-white/5 bg-slate-900/60 hover:border-white/20 hover:bg-slate-900'
+                        ? 'border-cyan-500 ring-1 ring-cyan-500/20'
+                        : ''
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1">
-                        <span className={`text-xs font-bold ${isToday ? 'text-cyan-400' : 'text-slate-300'}`}>
+                        <span className={`text-xs font-bold ${isToday ? 'text-cyan-500 font-extrabold' : ''}`}>
                           {dayNum}
                         </span>
                         {hasPlan && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" title="มีแผนการซ้อม"></span>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm" title="มีแผนการซ้อม"></span>
                         )}
                       </div>
 
                       {dayStudents.length > 0 && (
-                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.2 rounded-full">
-                          รวม {dayStudents.length} คน
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-600 font-extrabold px-1.5 py-0.2 rounded-full border border-emerald-500/30">
+                          {dayStudents.length} คน
                         </span>
                       )}
                     </div>
@@ -366,16 +363,16 @@ export default function Dashboard({
                     {/* Display Full Custom Class Group Name Badges */}
                     <div className="space-y-1 my-1">
                       {dateGroups.length === 0 ? (
-                        <div className="text-[9px] text-slate-600 text-center py-2">ไม่มีคิวซ้อม</div>
+                        <div className="text-[9px] text-slate-400 text-center py-2">ไม่มีคิวซ้อม</div>
                       ) : (
                         dateGroups.map((grp) => (
                           <div 
                             key={grp.id} 
-                            className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-800 text-cyan-300 font-semibold truncate border border-white/10 flex items-center justify-between"
+                            className="text-[10px] px-1.5 py-1 rounded-md cal-grp-badge truncate border flex items-center justify-between shadow-xs"
                             title={`${grp.name} (${grp.count} คน)`}
                           >
-                            <span className="truncate">{grp.name}</span>
-                            <span className="text-[9px] bg-cyan-500/20 text-cyan-200 px-1 rounded ml-1 font-bold flex-shrink-0">
+                            <span className="truncate font-medium">{grp.name}</span>
+                            <span className="text-[9px] px-1 rounded ml-1 font-extrabold flex-shrink-0 cal-grp-count">
                               {grp.count}คน
                             </span>
                           </div>
@@ -391,16 +388,16 @@ export default function Dashboard({
             {/* SELECTED DATE DETAILS: TRAINING PLAN & GROUPED ROSTER */}
             {/* ------------------------------------------------------------- */}
             {selectedCalendarDate && (
-              <div className="p-5 bg-slate-900/80 rounded-2xl border border-emerald-500/30 space-y-5 animate-in fade-in duration-150">
+              <div className="p-5 glass-card border border-emerald-500/40 space-y-5 animate-in fade-in duration-150">
                 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/50 pb-3">
                   <div>
-                    <h4 className="text-base font-bold text-white font-['Prompt'] flex items-center gap-2">
-                      <CalendarIcon className="w-5 h-5 text-emerald-400" />
+                    <h4 className="text-base font-bold font-['Prompt'] flex items-center gap-2">
+                      <CalendarIcon className="w-5 h-5 text-emerald-500" />
                       <span>ตารางและแผนการซ้อมประจำวันที่ {selectedCalendarDate} (18:00 - 19:00 น.)</span>
                     </h4>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      กลุ่มซ้อมที่มีคิววันนี้: <strong className="text-cyan-400">{getGroupsForDate(selectedCalendarDate).length}</strong> กลุ่ม • นักเรียนรวม: <strong className="text-emerald-400">{getStudentsForDate(selectedCalendarDate).length}</strong> คน
+                      กลุ่มซ้อมที่มีคิววันนี้: <strong className="text-cyan-500 font-bold">{getGroupsForDate(selectedCalendarDate).length}</strong> กลุ่ม • นักเรียนรวม: <strong className="text-emerald-500 font-bold">{getStudentsForDate(selectedCalendarDate).length}</strong> คน
                     </p>
                   </div>
 
@@ -409,7 +406,7 @@ export default function Dashboard({
                       onClick={startEditPlan}
                       className="btn-secondary text-xs"
                     >
-                      <Edit className="w-3.5 h-3.5 text-amber-400" />
+                      <Edit className="w-3.5 h-3.5 text-amber-500" />
                       <span>แก้ไขแผนการซ้อม</span>
                     </button>
                   ) : (
@@ -432,14 +429,14 @@ export default function Dashboard({
                 </div>
 
                 {/* DAILY TRAINING PLAN SECTION */}
-                <div className="p-4 bg-slate-950/70 border border-white/10 rounded-xl space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-400">
+                <div className="p-4 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-white/10 rounded-xl space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400">
                     <FileText className="w-4 h-4" />
                     <span>📋 แผนการซ้อมประจำวัน (Daily Training Plan & Drills):</span>
                   </div>
 
                   {!isEditingPlan ? (
-                    <div className="text-xs text-slate-200 whitespace-pre-line leading-relaxed font-mono bg-slate-900/50 p-3 rounded-lg border border-white/5">
+                    <div className="text-xs whitespace-pre-line leading-relaxed font-mono p-3 rounded-lg border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/50">
                       {currentPlanText}
                     </div>
                   ) : (
@@ -455,35 +452,35 @@ export default function Dashboard({
 
                 {/* GROUPED STUDENT ROSTER FOR THIS DATE */}
                 <div className="space-y-4">
-                  <h5 className="text-xs font-bold text-slate-300 font-['Prompt'] flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-cyan-400" />
+                  <h5 className="text-xs font-bold font-['Prompt'] flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-cyan-500" />
                     <span>กลุ่มซ้อมและรายชื่อนักเรียนที่มีคิวซ้อมวันนี้:</span>
                   </h5>
 
                   {getGroupsForDate(selectedCalendarDate).length === 0 ? (
-                    <p className="text-xs text-slate-500 py-4 text-center">ไม่มีกลุ่มซ้อมที่มีคิววันนี้</p>
+                    <p className="text-xs text-slate-400 py-4 text-center">ไม่มีกลุ่มซ้อมที่มีคิววันนี้</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {getGroupsForDate(selectedCalendarDate).map((grp) => (
-                        <div key={grp.id} className="p-4 bg-slate-950/60 border border-white/10 rounded-xl space-y-3">
-                          <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                            <span className="font-bold text-white text-xs font-['Prompt']">
+                        <div key={grp.id} className="p-4 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 rounded-xl space-y-3">
+                          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2">
+                            <span className="font-bold text-xs font-['Prompt']">
                               {grp.name}
                             </span>
-                            <span className="text-[10px] bg-cyan-500/20 text-cyan-300 font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">
+                            <span className="text-[10px] bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">
                               {grp.count} คน
                             </span>
                           </div>
 
                           <div className="space-y-2">
                             {grp.students.map((std) => (
-                              <div key={std.id} className="p-2.5 bg-slate-900 border border-white/5 rounded-lg flex items-center justify-between">
+                              <div key={std.id} className="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-lg flex items-center justify-between shadow-xs">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-xs text-emerald-400">
+                                  <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-bold text-xs text-emerald-600 dark:text-emerald-400">
                                     {std.nickname ? std.nickname.charAt(0) : std.name.charAt(0)}
                                   </div>
                                   <div>
-                                    <p className="text-xs font-bold text-white">{std.name} ({std.nickname})</p>
+                                    <p className="text-xs font-bold">{std.name} ({std.nickname})</p>
                                   </div>
                                 </div>
 
@@ -513,8 +510,8 @@ export default function Dashboard({
       {viewMode === 'weekly' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white font-['Prompt'] flex items-center gap-2">
-              <CalendarIcon className="w-5 h-5 text-emerald-400" />
+            <h3 className="text-lg font-bold font-['Prompt'] flex items-center gap-2">
+              <CalendarIcon className="w-5 h-5 text-emerald-500" />
               <span>ตารางซ้อมรายสัปดาห์ (Weekly Training Days)</span>
             </h3>
             <span className="text-xs text-slate-400">
@@ -531,28 +528,28 @@ export default function Dashboard({
                 <div 
                   key={day.id}
                   className={`glass-card p-3 flex flex-col justify-between min-h-[300px] border transition ${
-                    isToday ? 'border-emerald-500/60 bg-emerald-500/5 shadow-lg shadow-emerald-500/10' : 'border-white/10'
+                    isToday ? 'border-emerald-500 ring-2 ring-emerald-500/20 shadow-md' : ''
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between pb-2 mb-3 border-b border-white/10">
+                    <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-200/50">
                       <div>
-                        <span className={`text-xs font-bold ${isToday ? 'text-emerald-400' : 'text-slate-300'}`}>
+                        <span className={`text-xs font-bold ${isToday ? 'text-emerald-600 font-extrabold' : ''}`}>
                           {day.label}
                         </span>
                         {isToday && (
-                          <span className="ml-1.5 text-[9px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.2 rounded-full border border-emerald-500/30">
+                          <span className="ml-1.5 text-[9px] bg-emerald-500/20 text-emerald-600 font-bold px-1.5 py-0.2 rounded-full border border-emerald-500/30">
                             วันนี้
                           </span>
                         )}
                       </div>
-                      <span className="text-xs font-extrabold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-extrabold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
                         {dayStudents.length} คน
                       </span>
                     </div>
 
                     {dayStudents.length === 0 ? (
-                      <div className="py-8 text-center text-slate-500 text-[11px]">
+                      <div className="py-8 text-center text-slate-400 text-[11px]">
                         ไม่มีคิวซ้อมวัน{day.short}
                       </div>
                     ) : (
@@ -560,10 +557,10 @@ export default function Dashboard({
                         {dayStudents.map((std) => (
                           <div 
                             key={std.id}
-                            className="p-2.5 bg-slate-900/80 border border-white/10 rounded-xl space-y-1.5 hover:border-emerald-500/40 transition"
+                            className="p-2.5 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-xl space-y-1.5 hover:border-emerald-500/40 transition shadow-xs"
                           >
                             <div className="flex items-center justify-between">
-                              <span className="font-bold text-white text-xs font-['Prompt']">
+                              <span className="font-bold text-xs font-['Prompt']">
                                 {std.nickname || std.name}
                               </span>
                               <span className={std.course_type === 'group' ? 'text-[9px] badge-group py-0 px-1.5' : 'text-[9px] badge-private py-0 px-1.5'}>
@@ -573,7 +570,7 @@ export default function Dashboard({
 
                             <p className="text-[10px] text-slate-400 truncate">{std.name}</p>
 
-                            <div className="flex items-center justify-between text-[10px] pt-1 border-t border-white/5">
+                            <div className="flex items-center justify-between text-[10px] pt-1 border-t border-slate-100 dark:border-white/5">
                               <span className="text-slate-400">คงเหลือ:</span>
                               <span className={`font-bold px-1.5 py-0.2 rounded ${
                                 std.remaining_sessions <= 2 ? 'credit-red' : 'credit-green'
@@ -587,7 +584,7 @@ export default function Dashboard({
                     )}
                   </div>
 
-                  <div className="pt-2 text-[10px] text-slate-500 text-center border-t border-white/5 mt-3">
+                  <div className="pt-2 text-[10px] text-slate-400 text-center border-t border-slate-100 dark:border-white/5 mt-3">
                     {dayStudents.length} คนลงคิวซ้อม
                   </div>
                 </div>
@@ -604,34 +601,34 @@ export default function Dashboard({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             <div className="glass-card p-5">
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50">
                 <div className="flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5 text-amber-400" />
-                  <h3 className="font-semibold text-white font-['Prompt']">
+                  <ShieldAlert className="w-5 h-5 text-amber-500" />
+                  <h3 className="font-semibold text-sm font-['Prompt']">
                     คอร์สใกล้หมดอายุ ($\le$ 2 ครั้งคงเหลือ)
                   </h3>
                 </div>
-                <span className="text-xs bg-amber-500/20 text-amber-300 font-semibold px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                <span className="text-xs bg-amber-500/20 text-amber-600 font-semibold px-2.5 py-0.5 rounded-full border border-amber-500/30">
                   {lowCreditStudents.length} คน
                 </span>
               </div>
 
               {lowCreditStudents.length === 0 ? (
                 <div className="py-8 text-center text-slate-400">
-                  <CheckCircle2 className="w-10 h-10 mx-auto text-emerald-400 mb-2 opacity-80" />
+                  <CheckCircle2 className="w-10 h-10 mx-auto text-emerald-500 mb-2 opacity-80" />
                   <p className="text-sm">ไม่มีนักเรียนที่คอร์สใกล้หมด ทุกคนยังมีจำนวนครั้งเรียนคงเหลือเพียงพอ</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {lowCreditStudents.map((std) => (
-                    <div key={std.id} className="p-3.5 bg-slate-900/60 border border-white/10 rounded-xl flex items-center justify-between gap-3 hover:border-amber-500/40 transition">
+                    <div key={std.id} className="p-3.5 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-white/10 rounded-xl flex items-center justify-between gap-3 hover:border-amber-500/40 transition shadow-xs">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-emerald-400 text-lg border border-white/10">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-emerald-500 text-lg border border-slate-200 dark:border-white/10">
                           {std.nickname ? std.nickname.charAt(0) : std.name.charAt(0)}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-medium text-slate-100 text-sm">{std.name}</h4>
+                            <h4 className="font-medium text-sm">{std.name}</h4>
                             <span className={std.course_type === 'group' ? 'badge-group' : 'badge-private'}>
                               {std.course_type === 'group' ? 'คอร์สกลุ่ม 8 ครั้ง' : 'คอร์สเดี่ยว 8 ครั้ง'}
                             </span>
@@ -650,7 +647,7 @@ export default function Dashboard({
                         </div>
                         <button
                           onClick={() => onRenewCourse(std.id)}
-                          className="px-3 py-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 rounded-xl text-xs font-semibold flex items-center gap-1 transition"
+                          className="btn-primary text-xs"
                           title="เติมคอร์สต่ออายุ 8 ครั้ง"
                         >
                           <Repeat className="w-3.5 h-3.5" />
@@ -667,8 +664,8 @@ export default function Dashboard({
           <div className="space-y-4">
             <div className="glass-card p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-white text-sm font-['Prompt'] flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-cyan-400" />
+                <h3 className="font-semibold text-sm font-['Prompt'] flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-cyan-500" />
                   <span>ประวัติการเช็คชื่อล่าสุด</span>
                 </h3>
               </div>
@@ -680,12 +677,12 @@ export default function Dashboard({
                   {attendanceLogs.slice(0, 5).map((log) => {
                     const std = students.find(s => s.id === log.student_id);
                     return (
-                      <div key={log.id} className="p-2.5 bg-slate-900/50 rounded-xl border border-white/5 text-xs flex items-center justify-between">
+                      <div key={log.id} className="p-2.5 bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-white/5 text-xs flex items-center justify-between shadow-xs">
                         <div>
-                          <p className="font-medium text-slate-200">{std ? std.name : 'นักเรียน'}</p>
+                          <p className="font-medium">{std ? std.name : 'นักเรียน'}</p>
                           <p className="text-[10px] text-slate-400">เมื่อ {log.session_date} {log.notes && `• ${log.notes}`}</p>
                         </div>
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold text-[10px]">
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 font-semibold text-[10px]">
                           เช็คเข้าเรียน
                         </span>
                       </div>
@@ -696,7 +693,7 @@ export default function Dashboard({
 
               <button
                 onClick={() => onNavigateTab('attendance')}
-                className="w-full mt-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition"
+                className="w-full mt-4 py-2 btn-secondary text-xs font-semibold flex items-center justify-center gap-2 transition"
               >
                 <span>ไปที่หน้าเช็คชื่อทั้งหมด</span>
                 <ChevronRight className="w-3.5 h-3.5" />
