@@ -20,12 +20,14 @@ import {
   List,
   FileText,
   Edit,
-  Save
+  Save,
+  Layers
 } from 'lucide-react';
 import { DAYS_OF_WEEK } from '../dataStore';
 
 export default function Dashboard({ 
   students, 
+  classGroups = [],
   attendanceLogs, 
   trainingPlans,
   currentCoach, 
@@ -33,14 +35,13 @@ export default function Dashboard({
   onNavigateTab,
   onSaveTrainingPlan
 }) {
-  const [viewMode, setViewMode] = useState('monthly'); // Default to monthly calendar as requested
+  const [viewMode, setViewMode] = useState('monthly');
 
   const [currentDate, setCurrentDate] = useState(new Date(2026, 7, 1)); // Aug 2026
   const [selectedCalendarDate, setSelectedCalendarDate] = useState(new Date().toISOString().split('T')[0]);
 
   const [scheduleFilterCourse, setScheduleFilterCourse] = useState('all');
 
-  // Training plan edit state
   const [isEditingPlan, setIsEditingPlan] = useState(false);
   const [planInput, setPlanInput] = useState('');
 
@@ -88,7 +89,29 @@ export default function Dashboard({
     return getStudentsForDay(dayId);
   };
 
-  // Current Plan for selected date
+  // Group training summary for a specific date (Shows Group Names e.g. กลุ่ม 1 (4 คน), กลุ่ม 2 (2 คน))
+  const getGroupsForDate = (dateStr) => {
+    const dayStudents = getStudentsForDate(dateStr);
+    const groupsMap = {};
+
+    dayStudents.forEach(std => {
+      const gId = std.class_group_id || 'grp_1';
+      if (!groupsMap[gId]) {
+        const foundGroup = classGroups.find(c => c.id === gId);
+        groupsMap[gId] = {
+          id: gId,
+          name: foundGroup ? foundGroup.name : (std.course_type === 'private' ? 'คอร์สเรียนเดี่ยว' : 'คอร์สกลุ่ม'),
+          count: 0,
+          students: []
+        };
+      }
+      groupsMap[gId].count++;
+      groupsMap[gId].students.push(std);
+    });
+
+    return Object.values(groupsMap);
+  };
+
   const currentPlanText = trainingPlans[selectedCalendarDate] || '• ยังไม่มีรายละเอียดแผนการซ้อมสำหรับวันนี้ กดปุ่ม "แก้ไขแผนซ้อม" เพื่อเพิ่มรายละเอียด';
 
   const handleSelectDate = (dateStr) => {
@@ -121,7 +144,7 @@ export default function Dashboard({
               <span>ยินดีต้อนรับกลับสโมสร, {currentCoach.name}</span>
             </div>
             <h2 className="text-2xl font-bold text-white font-['Prompt']">
-              แดชบอร์ด & ตารางซ้อมแบดมินตัน
+              แดชบอร์ด & ตารางกลุ่มซ้อมแบดมินตัน
             </h2>
             <p className="text-sm text-slate-400 mt-1 flex items-center gap-2">
               <Clock className="w-3.5 h-3.5 text-slate-400" />
@@ -200,7 +223,7 @@ export default function Dashboard({
             </div>
           </div>
           <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-white/5">
-            คอร์สกลุ่มมาตรฐาน 8 ครั้ง (18:00-19:00)
+            คอร์สกลุ่มมาตรฐาน (18:00 - 19:00 น.)
           </div>
         </div>
 
@@ -215,7 +238,7 @@ export default function Dashboard({
             </div>
           </div>
           <div className="mt-2 text-[11px] text-slate-400 pt-2 border-t border-white/5">
-            เรียนเดี่ยวรายบุคคล (18:00-19:00)
+            เรียนเดี่ยวรายบุคคล (18:00 - 19:00 น.)
           </div>
         </div>
 
@@ -236,7 +259,7 @@ export default function Dashboard({
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* 1. MONTHLY CALENDAR VIEW WITH TRAINING PLAN DETAIL */}
+      {/* 1. MONTHLY CALENDAR VIEW WITH CLASS GROUP NAMES IN CELLS */}
       {/* ------------------------------------------------------------- */}
       {viewMode === 'monthly' && (
         <div className="space-y-5">
@@ -264,7 +287,7 @@ export default function Dashboard({
             </div>
 
             <p className="text-xs text-slate-400 hidden sm:block">
-              * คลิกวันที่ในปฏิทินเพื่อดู <strong className="text-emerald-400">แผนการซ้อมประจำวัน</strong> และรายชื่อนักเรียน
+              * แสดง <strong className="text-cyan-400">ชื่อกลุ่มซ้อม</strong> ในช่องปฏิทิน คลิกวันที่เพื่อดูแผนซ้อมและรายชื่อสมาชิก
             </p>
           </div>
 
@@ -285,13 +308,14 @@ export default function Dashboard({
             {/* Calendar Days */}
             <div className="grid grid-cols-7 gap-2">
               {Array.from({ length: firstDayIndex }).map((_, idx) => (
-                <div key={`empty_${idx}`} className="min-h-[85px] bg-slate-900/20 rounded-xl"></div>
+                <div key={`empty_${idx}`} className="min-h-[95px] bg-slate-900/20 rounded-xl"></div>
               ))}
 
               {Array.from({ length: daysInMonth }).map((_, idx) => {
                 const dayNum = idx + 1;
                 const dStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
                 const dayStudents = getStudentsForDate(dStr);
+                const dateGroups = getGroupsForDate(dStr);
                 const isSelected = selectedCalendarDate === dStr;
                 const isToday = new Date().toISOString().split('T')[0] === dStr;
                 const hasPlan = Boolean(trainingPlans[dStr]);
@@ -300,7 +324,7 @@ export default function Dashboard({
                   <div
                     key={`day_${dayNum}`}
                     onClick={() => handleSelectDate(dStr)}
-                    className={`min-h-[85px] p-2 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                    className={`min-h-[95px] p-2 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
                       isSelected
                         ? 'border-emerald-400 bg-emerald-500/20 shadow-lg shadow-emerald-500/20'
                         : isToday
@@ -320,21 +344,28 @@ export default function Dashboard({
 
                       {dayStudents.length > 0 && (
                         <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.2 rounded-full">
-                          {dayStudents.length} คน
+                          รวม {dayStudents.length} คน
                         </span>
                       )}
                     </div>
 
+                    {/* Display Class Group Name Badges inside Calendar Day Cell */}
                     <div className="space-y-1 my-1">
-                      {dayStudents.slice(0, 2).map((std) => (
-                        <div key={std.id} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-200 truncate border border-white/5">
-                          {std.nickname || std.name}
-                        </div>
-                      ))}
-                      {dayStudents.length > 2 && (
-                        <div className="text-[9px] text-slate-400 font-bold text-right">
-                          +{dayStudents.length - 2} คน
-                        </div>
+                      {dateGroups.length === 0 ? (
+                        <div className="text-[9px] text-slate-600 text-center py-2">ไม่มีคิวซ้อม</div>
+                      ) : (
+                        dateGroups.map((grp) => (
+                          <div 
+                            key={grp.id} 
+                            className="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-800 text-cyan-300 font-semibold truncate border border-white/10 flex items-center justify-between"
+                            title={`${grp.name} (${grp.count} คน)`}
+                          >
+                            <span className="truncate">{grp.name.split('[')[0]}</span>
+                            <span className="text-[9px] bg-cyan-500/20 text-cyan-200 px-1 rounded ml-1 font-bold">
+                              {grp.count}คน
+                            </span>
+                          </div>
+                        ))
                       )}
                     </div>
                   </div>
@@ -343,19 +374,19 @@ export default function Dashboard({
             </div>
 
             {/* ------------------------------------------------------------- */}
-            {/* SELECTED DATE DETAILS: TRAINING PLAN & STUDENT ROSTER */}
+            {/* SELECTED DATE DETAILS: TRAINING PLAN & GROUPED ROSTER */}
             {/* ------------------------------------------------------------- */}
             {selectedCalendarDate && (
-              <div className="p-5 bg-slate-900/80 rounded-2xl border border-emerald-500/30 space-y-4 animate-in fade-in duration-150">
+              <div className="p-5 bg-slate-900/80 rounded-2xl border border-emerald-500/30 space-y-5 animate-in fade-in duration-150">
                 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
                   <div>
                     <h4 className="text-base font-bold text-white font-['Prompt'] flex items-center gap-2">
                       <CalendarIcon className="w-5 h-5 text-emerald-400" />
-                      <span>ข้อมูลประจำวันที่ {selectedCalendarDate} (รอบ 18:00 - 19:00 น.)</span>
+                      <span>ตารางและแผนการซ้อมประจำวันที่ {selectedCalendarDate} (18:00 - 19:00 น.)</span>
                     </h4>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      นักเรียนมีคิวซ้อมวันนี้ทั้งหมด: <strong className="text-emerald-400">{getStudentsForDate(selectedCalendarDate).length}</strong> คน
+                      กลุ่มซ้อมที่มีคิววันนี้: <strong className="text-cyan-400">{getGroupsForDate(selectedCalendarDate).length}</strong> กลุ่ม • นักเรียนรวม: <strong className="text-emerald-400">{getStudentsForDate(selectedCalendarDate).length}</strong> คน
                     </p>
                   </div>
 
@@ -408,31 +439,50 @@ export default function Dashboard({
                   )}
                 </div>
 
-                {/* STUDENT ROSTER FOR THIS DATE */}
-                <div className="space-y-2">
-                  <h5 className="text-xs font-bold text-slate-300 font-['Prompt']">
-                    👥 รายชื่อนักเรียนที่มีคิวซ้อมวันนี้ ({getStudentsForDate(selectedCalendarDate).length} คน):
+                {/* GROUPED STUDENT ROSTER FOR THIS DATE */}
+                <div className="space-y-4">
+                  <h5 className="text-xs font-bold text-slate-300 font-['Prompt'] flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-cyan-400" />
+                    <span>กลุ่มซ้อมและรายชื่อนักเรียนที่มีคิวซ้อมวันนี้:</span>
                   </h5>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {getStudentsForDate(selectedCalendarDate).map((std) => (
-                      <div key={std.id} className="p-3 bg-slate-900 border border-white/10 rounded-xl flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center font-bold text-xs text-emerald-400 border border-white/10">
-                            {std.nickname ? std.nickname.charAt(0) : std.name.charAt(0)}
+                  {getGroupsForDate(selectedCalendarDate).length === 0 ? (
+                    <p className="text-xs text-slate-500 py-4 text-center">ไม่มีกลุ่มซ้อมที่มีคิววันนี้</p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {getGroupsForDate(selectedCalendarDate).map((grp) => (
+                        <div key={grp.id} className="p-4 bg-slate-950/60 border border-white/10 rounded-xl space-y-3">
+                          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                            <span className="font-bold text-white text-xs font-['Prompt']">
+                              {grp.name}
+                            </span>
+                            <span className="text-[10px] bg-cyan-500/20 text-cyan-300 font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">
+                              {grp.count} คน
+                            </span>
                           </div>
-                          <div>
-                            <p className="text-xs font-bold text-white font-['Prompt']">{std.name}</p>
-                            <p className="text-[10px] text-slate-400">ชื่อเล่น: {std.nickname}</p>
+
+                          <div className="space-y-2">
+                            {grp.students.map((std) => (
+                              <div key={std.id} className="p-2.5 bg-slate-900 border border-white/5 rounded-lg flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-xs text-emerald-400">
+                                    {std.nickname ? std.nickname.charAt(0) : std.name.charAt(0)}
+                                  </div>
+                                  <div>
+                                    <p className="text-xs font-bold text-white">{std.name} ({std.nickname})</p>
+                                  </div>
+                                </div>
+
+                                <span className={std.course_type === 'group' ? 'badge-group text-[9px]' : 'badge-private text-[9px]'}>
+                                  {std.course_type === 'group' ? 'คอร์สกลุ่ม' : 'คอร์สเดี่ยว'}
+                                </span>
+                              </div>
+                            ))}
                           </div>
                         </div>
-
-                        <span className={std.course_type === 'group' ? 'badge-group text-[10px]' : 'badge-private text-[10px]'}>
-                          {std.course_type === 'group' ? 'คอร์สกลุ่ม' : 'คอร์สเดี่ยว'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -454,7 +504,7 @@ export default function Dashboard({
               <span>ตารางซ้อมรายสัปดาห์ (Weekly Training Days)</span>
             </h3>
             <span className="text-xs text-slate-400">
-              * แสดงรายชื่อนักเรียนที่มีคิวซ้อมในแต่ละวันของสัปดาห์ (18:00-19:00 น.)
+              * แสดงรายชื่อกลุ่มและนักเรียนที่มีคิวซ้อมในแต่ละวันของสัปดาห์ (18:00-19:00 น.)
             </span>
           </div>
 
