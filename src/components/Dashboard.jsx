@@ -428,15 +428,15 @@ export default function Dashboard({
                   )}
                 </div>
 
-                {/* DAILY TRAINING PLAN SECTION */}
-                <div className="p-4 bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-white/10 rounded-xl space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400">
+                {/* DAILY TRAINING PLAN SECTION (LIGHT MODE COMPATIBLE) */}
+                <div className="p-4 rounded-xl space-y-2 border plan-box bg-slate-950/70 dark:bg-slate-950/70 border-white/10">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-500">
                     <FileText className="w-4 h-4" />
                     <span>📋 แผนการซ้อมประจำวัน (Daily Training Plan & Drills):</span>
                   </div>
 
                   {!isEditingPlan ? (
-                    <div className="text-xs whitespace-pre-line leading-relaxed font-mono p-3 rounded-lg border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/50">
+                    <div className="text-xs whitespace-pre-line leading-relaxed font-mono p-3 rounded-lg border plan-text bg-slate-900/50 border-white/5">
                       {currentPlanText}
                     </div>
                   ) : (
@@ -450,7 +450,7 @@ export default function Dashboard({
                   )}
                 </div>
 
-                {/* GROUPED STUDENT ROSTER FOR THIS DATE */}
+                {/* GROUPED STUDENT ROSTER FOR THIS DATE (LIGHT MODE COMPATIBLE) */}
                 <div className="space-y-4">
                   <h5 className="text-xs font-bold font-['Prompt'] flex items-center gap-2">
                     <Layers className="w-4 h-4 text-cyan-500" />
@@ -462,8 +462,8 @@ export default function Dashboard({
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {getGroupsForDate(selectedCalendarDate).map((grp) => (
-                        <div key={grp.id} className="p-4 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 rounded-xl space-y-3">
-                          <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2">
+                        <div key={grp.id} className="p-4 rounded-xl space-y-3 border roster-card bg-slate-950/60 border-white/10">
+                          <div className="flex items-center justify-between border-b border-slate-200/40 dark:border-white/10 pb-2">
                             <span className="font-bold text-xs font-['Prompt']">
                               {grp.name}
                             </span>
@@ -474,7 +474,7 @@ export default function Dashboard({
 
                           <div className="space-y-2">
                             {grp.students.map((std) => (
-                              <div key={std.id} className="p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-lg flex items-center justify-between shadow-xs">
+                              <div key={std.id} className="p-2.5 rounded-lg flex items-center justify-between border shadow-xs roster-row bg-slate-900 border-white/5">
                                 <div className="flex items-center gap-2">
                                   <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-bold text-xs text-emerald-600 dark:text-emerald-400">
                                     {std.nickname ? std.nickname.charAt(0) : std.name.charAt(0)}

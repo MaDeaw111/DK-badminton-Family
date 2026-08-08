@@ -75,6 +75,30 @@ body {
   color: #065F46 !important;
 }
 
+/* Light Mode Overrides for Lower Training Plan & Student Roster Sections */
+[data-theme="light"] .plan-box {
+  background-color: #FFFBEB !important;
+  border-color: #FDE68A !important;
+  color: #78350F !important;
+}
+
+[data-theme="light"] .plan-text {
+  background-color: #FFFFFF !important;
+  border-color: #FEF3C7 !important;
+  color: #1E293B !important;
+}
+
+[data-theme="light"] .roster-card {
+  background-color: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+}
+
+[data-theme="light"] .roster-row {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
 [data-theme="light"] .text-slate-400 {
   color: #475569 !important;
 }
@@ -88,22 +112,6 @@ body {
 }
 
 [data-theme="light"] .text-white {
-  color: #0F172A !important;
-}
-
-[data-theme="light"] .bg-slate-900 {
-  background-color: #F8FAFC !important;
-  color: #0F172A !important;
-  border-color: #CBD5E1 !important;
-}
-
-[data-theme="light"] .bg-slate-950 {
-  background-color: #F1F5F9 !important;
-  color: #0F172A !important;
-}
-
-[data-theme="light"] .bg-slate-800 {
-  background-color: #E2E8F0 !important;
   color: #0F172A !important;
 }
 
