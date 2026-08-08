@@ -10,17 +10,17 @@ export const DAYS_OF_WEEK = [
   { id: 'Sun', label: 'วันอาทิตย์', short: 'อา.' }
 ];
 
-// Initial Custom Class Groups (ตรงกับกลุ่มที่คุณโค้ชสร้างไว้ในระบบ)
+// Initial Custom Class Groups (ตรงกับกลุ่มที่คุณโค้ชต้องการ 100%)
 export const INITIAL_CLASS_GROUPS = [
-  { id: 'grp_1', name: 'บ้านแม่ปิณ&ปิณ', max: 5 },
+  { id: 'grp_1', name: 'ครอสบ้านพ่อแม่ปิณ+ปัณ', max: 5 },
   { id: 'grp_2', name: 'กลุ่มแนนและเพื่อนๆ', max: 5 },
-  { id: 'grp_3', name: 'คอร์สเด็ก', max: 5 },
+  { id: 'grp_3', name: 'ครอสเด็กเล็ก', max: 5 },
   { id: 'grp_private', name: 'คอร์สเรียนเดี่ยว (Private 1-on-1)', max: 1 }
 ];
 
 // Student Master Registry
 export const INITIAL_STUDENTS = [
-  // กลุ่ม 1: บ้านแม่ปิณ&ปิณ (ซ้อมวันจันทร์)
+  // 1. ครอสบ้านพ่อแม่ปิณ+ปัณ (ซ้อมวันจันทร์)
   {
     id: 'std_1',
     name: 'แม่ปิณ',
@@ -29,7 +29,7 @@ export const INITIAL_STUDENTS = [
     phone: '081-234-5678',
     parent_phone: '089-111-2222',
     training_days: ['Mon'],
-    notes: 'คอร์สกลุ่มบ้านแม่ปิณ',
+    notes: 'ครอสบ้านพ่อแม่ปิณ+ปัณ',
     course_type: 'group',
     class_group_id: 'grp_1',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -46,7 +46,7 @@ export const INITIAL_STUDENTS = [
     phone: '082-999-8888',
     parent_phone: '086-444-5555',
     training_days: ['Mon'],
-    notes: 'คอร์สกลุ่มบ้านแม่ปิณ',
+    notes: 'ครอสบ้านพ่อแม่ปิณ+ปัณ',
     course_type: 'group',
     class_group_id: 'grp_1',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -63,7 +63,7 @@ export const INITIAL_STUDENTS = [
     phone: '084-111-3333',
     parent_phone: '081-222-4444',
     training_days: ['Mon'],
-    notes: 'คอร์สกลุ่มบ้านแม่ปิณ',
+    notes: 'ครอสบ้านพ่อแม่ปิณ+ปัณ',
     course_type: 'group',
     class_group_id: 'grp_1',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -80,7 +80,7 @@ export const INITIAL_STUDENTS = [
     phone: '085-777-6666',
     parent_phone: '081-333-9999',
     training_days: ['Mon'],
-    notes: 'คอร์สกลุ่มบ้านแม่ปิณ',
+    notes: 'ครอสบ้านพ่อแม่ปิณ+ปัณ',
     course_type: 'group',
     class_group_id: 'grp_1',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -90,7 +90,7 @@ export const INITIAL_STUDENTS = [
     status: 'active'
   },
 
-  // กลุ่ม 2: กลุ่มแนนและเพื่อนๆ (ซ้อมวันอังคาร, พฤหัสบดี)
+  // 2. กลุ่มแนนและเพื่อนๆ (ซ้อมวันอังคาร, พฤหัสบดี)
   {
     id: 'std_5',
     name: 'บิม',
@@ -160,7 +160,7 @@ export const INITIAL_STUDENTS = [
     status: 'active'
   },
 
-  // กลุ่ม 3: คอร์สเด็ก (ซ้อมวันพุธ, เสาร์)
+  // 3. ครอสเด็กเล็ก (ซ้อมวันพุธ, เสาร์)
   {
     id: 'std_9',
     name: 'พี่ปุณณ์',
@@ -169,7 +169,7 @@ export const INITIAL_STUDENTS = [
     phone: '081-234-5678',
     parent_phone: '089-111-2222',
     training_days: ['Wed', 'Sat'],
-    notes: 'คอร์สเด็กเล็ก',
+    notes: 'ครอสเด็กเล็ก',
     course_type: 'group',
     class_group_id: 'grp_3',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -186,7 +186,7 @@ export const INITIAL_STUDENTS = [
     phone: '082-999-8888',
     parent_phone: '086-444-5555',
     training_days: ['Wed', 'Sat'],
-    notes: 'คอร์สเด็กเล็ก',
+    notes: 'ครอสเด็กเล็ก',
     course_type: 'group',
     class_group_id: 'grp_3',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -203,7 +203,7 @@ export const INITIAL_STUDENTS = [
     phone: '085-777-6666',
     parent_phone: '081-333-9999',
     training_days: ['Wed', 'Sat'],
-    notes: 'คอร์สเด็กเล็ก',
+    notes: 'ครอสเด็กเล็ก',
     course_type: 'group',
     class_group_id: 'grp_3',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -220,7 +220,7 @@ export const INITIAL_STUDENTS = [
     phone: '088-555-1234',
     parent_phone: '089-777-8888',
     training_days: ['Wed', 'Sat'],
-    notes: 'คอร์สเด็กเล็ก',
+    notes: 'ครอสเด็กเล็ก',
     course_type: 'group',
     class_group_id: 'grp_3',
     course_name: 'คอร์สกลุ่ม 8 ครั้ง (3,500B)',
@@ -254,21 +254,21 @@ export const COACHES = [
 ];
 
 export const loadLocalStudents = () => {
-  const data = localStorage.getItem('dk_students');
+  const data = localStorage.getItem('dk_students_v2');
   return data ? JSON.parse(data) : INITIAL_STUDENTS;
 };
 
 export const saveLocalStudents = (students) => {
-  localStorage.setItem('dk_students', JSON.stringify(students));
+  localStorage.setItem('dk_students_v2', JSON.stringify(students));
 };
 
 export const loadLocalClassGroups = () => {
-  const data = localStorage.getItem('dk_class_groups');
+  const data = localStorage.getItem('dk_class_groups_v2');
   return data ? JSON.parse(data) : INITIAL_CLASS_GROUPS;
 };
 
 export const saveLocalClassGroups = (groups) => {
-  localStorage.setItem('dk_class_groups', JSON.stringify(groups));
+  localStorage.setItem('dk_class_groups_v2', JSON.stringify(groups));
 };
 
 export const loadLocalTrainingPlans = () => {
