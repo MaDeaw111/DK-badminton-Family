@@ -58,8 +58,10 @@ export default function Dashboard({
     day: 'numeric' 
   });
 
-  const dayNameMap = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
-  const currentDayId = dayNameMap[new Date().getDay()];
+  const monthNamesTh = [
+    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+  ];
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -67,13 +69,18 @@ export default function Dashboard({
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayIndex = new Date(year, month, 1).getDay();
 
-  const monthNamesTh = [
-    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
-    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-  ];
-
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+
+  // Precise local date helper to eliminate UTC timezone shift
+  const getDayIdFromDateStr = (dateStr) => {
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return 'Sun';
+    const [y, m, d] = parts.map(Number);
+    const localDate = new Date(y, m - 1, d);
+    const dayNameMap = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
+    return dayNameMap[localDate.getDay()];
+  };
 
   const getStudentsForDay = (dayId) => {
     return students.filter(std => {
@@ -84,8 +91,7 @@ export default function Dashboard({
   };
 
   const getStudentsForDate = (dateStr) => {
-    const d = new Date(dateStr);
-    const dayId = dayNameMap[d.getDay()];
+    const dayId = getDayIdFromDateStr(dateStr);
     return getStudentsForDay(dayId);
   };
 
@@ -99,7 +105,6 @@ export default function Dashboard({
       if (!groupsMap[gId]) {
         const foundGroup = classGroups.find(c => c.id === gId);
         let displayName = foundGroup ? foundGroup.name : (std.course_type === 'private' ? 'คอร์สเรียนเดี่ยว' : 'คอร์สกลุ่ม');
-        // Clean bracketed time text if present
         displayName = displayName.replace(/\s*\[.*?\]\s*/g, '').trim();
 
         groupsMap[gId] = {
@@ -132,6 +137,8 @@ export default function Dashboard({
     setPlanInput(trainingPlans[selectedCalendarDate] || '• วอร์มร่างกาย & ฟุตเวิร์ก 6 จุด (15 นาที)\n• ฝึกตีลูกหลัง & เซิร์ฟ (20 นาที)\n• เกมรับหน้าตาข่าย (15 นาที)\n• ซ้อมแข่งเดี่ยว/คู่ (10 นาที)');
     setIsEditingPlan(true);
   };
+
+  const currentDayId = dayNameMap[new Date().getDay()] || 'Sun';
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
@@ -263,7 +270,7 @@ export default function Dashboard({
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* 1. MONTHLY CALENDAR VIEW WITH CLASS GROUP NAMES IN CELLS */}
+      {/* 1. MONTHLY CALENDAR VIEW WITH EXACT CLASS GROUP NAMES IN CELLS */}
       {/* ------------------------------------------------------------- */}
       {viewMode === 'monthly' && (
         <div className="space-y-5">
@@ -291,7 +298,7 @@ export default function Dashboard({
             </div>
 
             <p className="text-xs text-slate-400 hidden sm:block">
-              * แสดง <strong className="text-cyan-400">ชื่อกลุ่มซ้อม</strong> ในปฏิทิน คลิกวันที่เพื่อดูแผนซ้อมและรายชื่อสมาชิก
+              * แสดง <strong className="text-cyan-400">ชื่อกลุ่มซ้อมแยก</strong> ในปฏิทิน คลิกวันที่เพื่อดูแผนซ้อมและรายชื่อสมาชิก
             </p>
           </div>
 
