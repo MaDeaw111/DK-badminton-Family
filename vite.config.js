@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  base: '/DK-badminton-Family/',
   server: {
     port: 3000,
     host: true
