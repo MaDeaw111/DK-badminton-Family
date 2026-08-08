@@ -10,7 +10,7 @@ export const DAYS_OF_WEEK = [
   { id: 'Sun', label: 'วันอาทิตย์', short: 'อา.' }
 ];
 
-// Initial Custom Class Groups (ตรงกับกลุ่มที่คุณโค้ชต้องการ 100%)
+// Initial Custom Class Groups (ตรงกับกลุ่มที่คุณโค้ชระบุ 100%)
 export const INITIAL_CLASS_GROUPS = [
   { id: 'grp_1', name: 'ครอสบ้านพ่อแม่ปิณ+ปัณ', max: 5 },
   { id: 'grp_2', name: 'กลุ่มแนนและเพื่อนๆ', max: 5 },
@@ -254,21 +254,48 @@ export const COACHES = [
 ];
 
 export const loadLocalStudents = () => {
-  const data = localStorage.getItem('dk_students_v2');
-  return data ? JSON.parse(data) : INITIAL_STUDENTS;
+  const data = localStorage.getItem('dk_students_v3');
+  if (data) {
+    try {
+      const parsed = JSON.parse(data);
+      return parsed.map(std => {
+        if (std.class_group_id === 'grp_1') return { ...std, notes: 'ครอสบ้านพ่อแม่ปิณ+ปัณ' };
+        if (std.class_group_id === 'grp_2') return { ...std, notes: 'กลุ่มแนนและเพื่อนๆ' };
+        if (std.class_group_id === 'grp_3') return { ...std, notes: 'ครอสเด็กเล็ก' };
+        return std;
+      });
+    } catch (e) {
+      return INITIAL_STUDENTS;
+    }
+  }
+  return INITIAL_STUDENTS;
 };
 
 export const saveLocalStudents = (students) => {
-  localStorage.setItem('dk_students_v2', JSON.stringify(students));
+  localStorage.setItem('dk_students_v3', JSON.stringify(students));
 };
 
 export const loadLocalClassGroups = () => {
-  const data = localStorage.getItem('dk_class_groups_v2');
-  return data ? JSON.parse(data) : INITIAL_CLASS_GROUPS;
+  const data = localStorage.getItem('dk_class_groups_v3');
+  if (data) {
+    try {
+      const parsed = JSON.parse(data);
+      // Migration check: บังคับอัปเดตชื่อกลุ่ม 3 กลุ่มใหม่ ป้องกันแคชเก่าค้าง
+      return parsed.map(g => {
+        if (g.id === 'grp_1') return { ...g, name: 'ครอสบ้านพ่อแม่ปิณ+ปัณ' };
+        if (g.id === 'grp_2') return { ...g, name: 'กลุ่มแนนและเพื่อนๆ' };
+        if (g.id === 'grp_3') return { ...g, name: 'ครอสเด็กเล็ก' };
+        return g;
+      });
+    } catch (e) {
+      return INITIAL_CLASS_GROUPS;
+    }
+  }
+  return INITIAL_CLASS_GROUPS;
 };
 
 export const saveLocalClassGroups = (groups) => {
-  localStorage.setItem('dk_class_groups_v2', JSON.stringify(groups));
+  localStorage.setItem('dk_class_groups_v3', JSON.stringify(groups));
 };
 
 export const loadLocalTrainingPlans = () => {
