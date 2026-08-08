@@ -25,12 +25,15 @@ import {
 } from 'lucide-react';
 import { DAYS_OF_WEEK } from '../dataStore';
 
+// Top-level Day Map definition
+const DAY_NAME_MAP = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
+
 export default function Dashboard({ 
-  students, 
+  students = [], 
   classGroups = [],
-  attendanceLogs, 
-  trainingPlans,
-  currentCoach, 
+  attendanceLogs = [], 
+  trainingPlans = {},
+  currentCoach = { name: 'โค้ช A' }, 
   onRenewCourse, 
   onNavigateTab,
   onSaveTrainingPlan
@@ -58,28 +61,28 @@ export default function Dashboard({
     day: 'numeric' 
   });
 
-  const monthNamesTh = [
-    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
-    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-  ];
-
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayIndex = new Date(year, month, 1).getDay();
 
+  const monthNamesTh = [
+    'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 
+    'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+  ];
+
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
   // Precise local date helper to eliminate UTC timezone shift
   const getDayIdFromDateStr = (dateStr) => {
+    if (!dateStr) return 'Sun';
     const parts = dateStr.split('-');
     if (parts.length !== 3) return 'Sun';
     const [y, m, d] = parts.map(Number);
     const localDate = new Date(y, m - 1, d);
-    const dayNameMap = { 0: 'Sun', 1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat' };
-    return dayNameMap[localDate.getDay()];
+    return DAY_NAME_MAP[localDate.getDay()] || 'Sun';
   };
 
   const getStudentsForDay = (dayId) => {
@@ -104,7 +107,7 @@ export default function Dashboard({
       const gId = std.class_group_id || 'grp_1';
       if (!groupsMap[gId]) {
         const foundGroup = classGroups.find(c => c.id === gId);
-        let displayName = foundGroup ? foundGroup.name : (std.course_type === 'private' ? 'คอร์สเรียนเดี่ยว' : 'คอร์สกลุ่ม');
+        let displayName = foundGroup ? foundGroup.name : (std.course_name || 'คอร์สกลุ่ม');
         displayName = displayName.replace(/\s*\[.*?\]\s*/g, '').trim();
 
         groupsMap[gId] = {
@@ -138,7 +141,7 @@ export default function Dashboard({
     setIsEditingPlan(true);
   };
 
-  const currentDayId = dayNameMap[new Date().getDay()] || 'Sun';
+  const currentDayId = DAY_NAME_MAP[new Date().getDay()] || 'Sun';
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
